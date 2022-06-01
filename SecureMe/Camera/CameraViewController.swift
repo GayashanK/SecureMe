@@ -8,15 +8,19 @@
 import Cocoa
 import AVFoundation
 
+// MARK: CameraViewController
 class CameraViewController: NSViewController {
     
     @IBOutlet weak var progressBar: NSProgressIndicator!
     
+    // MARK: Life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         self.checkAuthorizations()
     }
     
+    // MARK: Private Methods
+    /// Check Authorization Status for Audio and Video Device Access
     private func checkAuthorizations() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized: // The user has previously granted access to the camera.
@@ -57,6 +61,7 @@ class CameraViewController: NSViewController {
         }
     }
     
+    /// Capture Session Audio and Video Inputs
     private func setupCaptureSession() {
         // Create the capture session.
         let captureSession = AVCaptureSession()
@@ -83,6 +88,8 @@ class CameraViewController: NSViewController {
         }
     }
     
+    /// Capture Session Movie File Output
+    /// - Parameters session: AVCaptureSession
     private func captureMovieOutput(session: AVCaptureSession) {
         let movieOutput = AVCaptureMovieFileOutput()
         
@@ -95,6 +102,8 @@ class CameraViewController: NSViewController {
         self.saveMovieFile(output: movieOutput, session: session)
     }
     
+    /// Save Output Movie File to URL
+    /// - Parameters output: AVCaptureMovieFileOutput, session: AVCaptureSession
     private func saveMovieFile(output: AVCaptureMovieFileOutput, session: AVCaptureSession) {
         let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(fireTimer), userInfo: nil, repeats: true)
         let fileName = Date().ISO8601Format() + "-rec.mov"
@@ -119,6 +128,7 @@ class CameraViewController: NSViewController {
     }
 }
 
+// MARK: AVCaptureFileOutputRecordingDelegate
 extension CameraViewController: AVCaptureFileOutputRecordingDelegate {
     
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
